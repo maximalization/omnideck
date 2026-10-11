@@ -5,6 +5,7 @@ import {
     useState,
 } from 'react';
 
+import { containerFileUrl } from '../../utils/containerFileUrl.js';
 import useArtifacts from '../../hooks/useArtifacts.js';
 import Badge from '../Badge.jsx';
 import DeleteArtifactDialog from './DeleteArtifactDialog.jsx';
@@ -140,7 +141,7 @@ function ImagePreview({ item }) {
                 className={`${styles.thumbImg} ${styles.previewAsset} ${
                     status === 'loaded' ? styles.previewAssetLoaded : ''
                 }`}
-                src={item.path}
+                src={containerFileUrl(item.path)}
                 alt=""
                 loading="lazy"
                 onLoad={() => setStatus('loaded')}
@@ -164,7 +165,7 @@ function HtmlPreview({ item }) {
                 className={`${styles.thumbFrame} ${styles.previewAsset} ${
                     status === 'loaded' ? styles.previewAssetLoaded : ''
                 }`}
-                src={item.path}
+                src={containerFileUrl(item.path)}
                 title=""
                 sandbox=""
                 loading="lazy"
@@ -181,7 +182,7 @@ function TextPreview({ item }) {
     const [text, setText] = useState('');
     useEffect(() => {
         const controller = new AbortController();
-        fetch(item.path, { signal: controller.signal })
+        fetch(containerFileUrl(item.path), { signal: controller.signal })
             .then((response) => {
                 if (!response.ok) throw new Error('Preview request failed');
                 return response.text();
