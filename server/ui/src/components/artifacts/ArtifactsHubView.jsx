@@ -129,7 +129,7 @@ function PreviewUnavailable() {
 
 function ImagePreview({ item }) {
     const [status, setStatus] = useState('loading');
-    if (status === 'error') return <PreviewUnavailable />;
+    if (status === 'error' || !item.path) return <PreviewUnavailable />;
     return (
         <>
             <PreviewSkeleton
@@ -153,7 +153,7 @@ function ImagePreview({ item }) {
 
 function HtmlPreview({ item }) {
     const [status, setStatus] = useState('loading');
-    if (status === 'error') return <PreviewUnavailable />;
+    if (status === 'error' || !item.path) return <PreviewUnavailable />;
     return (
         <>
             <PreviewSkeleton
@@ -181,6 +181,10 @@ function TextPreview({ item }) {
     const [status, setStatus] = useState('loading');
     const [text, setText] = useState('');
     useEffect(() => {
+        if (!item.path) {
+            setStatus('error');
+            return undefined;
+        }
         const controller = new AbortController();
         fetch(containerFileUrl(item.path), { signal: controller.signal })
             .then((response) => {
