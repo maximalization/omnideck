@@ -406,8 +406,8 @@ class FileTaskStore:
             )
             # Deleting the latest run must preserve its saved scheduling anchor.
             anchor = max(
-                last_completed or routine.created_at,
-                routine.last_run_spawned_at or routine.created_at,
+                filter(None, (last_completed, routine.last_run_spawned_at)),
+                default=routine.created_at,
             )
             if cron_has_fired_since(routine.cron, anchor, routine.timezone):
                 result.append(routine)
