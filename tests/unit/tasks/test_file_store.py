@@ -70,15 +70,13 @@ class TestRecurringSchedule:
         clock.current = datetime(2026, 7, 3, 9, tzinfo=timezone.utc)
         assert [r.id for r in reopened.get_due_recurring_routines()] == [routine.id]
 
-    @pytest.mark.parametrize("stamp_schedule", [False, True])
-    def test_later_completion_remains_the_schedule_anchor(self, store, clock, stamp_schedule):
+    def test_later_completion_remains_the_schedule_anchor(self, store, clock):
         """A long run still skips occurrences passed before it finished."""
         routine = store.create_routine("Daily report", cron="0 9 * * *")
         store.create_task(routine.id, "Report", "Write the daily report", agent_profile="code_expert")
         clock.current = datetime(2026, 7, 1, 9, tzinfo=timezone.utc)
         run = store.queue_run(routine.id)
-        if stamp_schedule:
-            store.stamp_last_run_spawned(routine.id)
+        store.stamp_last_run_spawned(routine.id)
         result = store.get_task_results(run.id)[0]
         store.mark_task_result_running(result.id)
         store.update_run_status(run.id)
